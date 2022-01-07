@@ -35,3 +35,10 @@
   position: absolute;
   height: 100%;
 }
+
+#google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

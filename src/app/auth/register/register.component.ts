@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UserService } from '../../services/user.service';
 
@@ -24,7 +25,11 @@ export class RegisterComponent implements OnInit {
     }
   );
 
-  constructor(private fb: FormBuilder, private userService: UserService) {}
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {}
 
@@ -39,8 +44,7 @@ export class RegisterComponent implements OnInit {
     // Send form...
     this.userService.createUser(this.registerForm.value).subscribe(
       (resp) => {
-        console.log('User created...');
-        console.log(resp);
+        this.router.navigateByUrl('/');
       },
       // (e) => console.warn(e.error.msg)
       (e) => Swal.fire('Error', e.error.msg, 'error')
