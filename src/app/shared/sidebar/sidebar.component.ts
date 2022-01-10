@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { User } from 'src/app/models/user.model';
 import { UserService } from 'src/app/services/user.service';
 import { SidebarService } from '../../services/sidebar.service';
 
@@ -9,7 +10,7 @@ import { SidebarService } from '../../services/sidebar.service';
 })
 export class SidebarComponent implements OnInit {
   public menuItems!: any[];
-  public image: string = '';
+  public user!: User;
 
   constructor(
     private sidebarService: SidebarService,
@@ -19,6 +20,6 @@ export class SidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.image = this.userService.user.imageUrl;
+    this.user = this.userService.user;
   }
 }
