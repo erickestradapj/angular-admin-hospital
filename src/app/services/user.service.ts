@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
 import { Router } from '@angular/router';
+import { User } from '../models/user.model';
 
 declare const gapi: any;
 @Injectable({
@@ -13,6 +14,7 @@ declare const gapi: any;
 export class UserService {
   private baseUrl = environment.base_url;
   public auth2: any;
+  public user!: User;
 
   constructor(
     private http: HttpClient,
@@ -58,6 +60,8 @@ export class UserService {
       })
       .pipe(
         tap((resp: any) => {
+          const { email, google, img, name, role, uid } = resp.user;
+          this.user = new User(name, email, '', img, google, role, uid);
           localStorage.setItem('token', resp.token);
         }),
         map((resp) => true),
