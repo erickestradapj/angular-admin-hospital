@@ -13,6 +13,7 @@ export class ProfileComponent implements OnInit {
   public profileForm!: FormGroup;
   public user!: User;
   public imageUpload!: File;
+  public imgTemp: any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,11 +42,23 @@ export class ProfileComponent implements OnInit {
 
   changeImage(event: any) {
     this.imageUpload = event.target.files[0];
+
+    if (!this.imageUpload) {
+      this.imgTemp = null;
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(this.imageUpload);
+
+    reader.onloadend = () => {
+      this.imgTemp = reader.result;
+    };
   }
 
   uploadImage() {
     this.fileUploadService
       .updatePhoto(this.imageUpload, 'users', this.user.uid!)
-      .then((img) => console.log(img));
+      .then((img) => (this.user.img = img));
   }
 }

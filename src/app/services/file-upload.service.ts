@@ -27,9 +27,18 @@ export class FileUploadService {
         body: formData,
       });
 
-      console.log(resp);
+      const data = await resp.json();
+      console.log(
+        '🚀 ~ file: file-upload.service.ts ~ line 31 ~ FileUploadService ~ data',
+        data
+      );
 
-      return 'Image upload!!';
+      if (data.ok) {
+        return data.nameFile;
+      } else {
+        console.log(data.msg);
+        return false;
+      }
     } catch (error) {
       console.log(error);
       return false;
