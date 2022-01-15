@@ -24,6 +24,14 @@ export class UserService {
     this.googleInit();
   }
 
+  public get token(): string {
+    return localStorage.getItem('token') || '';
+  }
+
+  public get uid(): string {
+    return this.user.uid || '';
+  }
+
   googleInit() {
     return new Promise<void>((resolve) => {
       gapi.load('auth2', () => {
@@ -50,12 +58,10 @@ export class UserService {
   }
 
   validateToken(): Observable<boolean> {
-    const token = localStorage.getItem('token') || '';
-
     return this.http
       .get<boolean>(`${this.baseUrl}/login/renew`, {
         headers: {
-          'x-token': token,
+          'x-token': this.token,
         },
       })
       .pipe(
@@ -73,6 +79,19 @@ export class UserService {
     return this.http
       .post<RegisterForm>(`${this.baseUrl}/users`, formData)
       .pipe(tap((resp: any) => localStorage.setItem('token', resp.token)));
+  }
+
+  updateProfile(data: { email: string; name: string; role: string }) {
+    data = {
+      ...data,
+      role: this.user.role || '',
+    };
+
+    return this.http.put(`${this.baseUrl}/users/${this.uid}`, data, {
+      headers: {
+        'x-token': this.token,
+      },
+    });
   }
 
   login(formData: LoginForm): Observable<LoginForm> {
