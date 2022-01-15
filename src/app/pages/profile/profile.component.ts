@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
 import { FileUploadService } from 'src/app/services/file-upload.service';
 import { UserService } from 'src/app/services/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -32,12 +33,19 @@ export class ProfileComponent implements OnInit {
 
   updateProfile() {
     console.log(this.profileForm.value);
-    this.userService.updateProfile(this.profileForm.value).subscribe((resp) => {
-      const { name, email } = this.profileForm.value;
+    this.userService.updateProfile(this.profileForm.value).subscribe(
+      (resp) => {
+        const { name, email } = this.profileForm.value;
 
-      this.user.name = name;
-      this.user.email = email;
-    });
+        this.user.name = name;
+        this.user.email = email;
+
+        Swal.fire('Saved', 'Changes were saved', 'success');
+      },
+      (err) => {
+        Swal.fire('Error', err.error.msg, 'error');
+      }
+    );
   }
 
   changeImage(event: any) {
@@ -59,6 +67,12 @@ export class ProfileComponent implements OnInit {
   uploadImage() {
     this.fileUploadService
       .updatePhoto(this.imageUpload, 'users', this.user.uid!)
-      .then((img) => (this.user.img = img));
+      .then((img) => {
+        this.user.img = img;
+        Swal.fire('Saved', 'Image upload', 'success');
+      })
+      .catch((err) => {
+        Swal.fire('Error', err.error.msg, 'error');
+      });
   }
 }
