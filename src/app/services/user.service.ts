@@ -119,6 +119,26 @@ export class UserService {
   getUsers(from: number = 0): Observable<GetUsers> {
     const url = `${this.baseUrl}/users?from=${from}`;
 
-    return this.http.get<GetUsers>(url, this.headers);
+    return this.http.get<GetUsers>(url, this.headers).pipe(
+      map((resp) => {
+        const users: User[] = resp.users.map(
+          (user) =>
+            new User(
+              user.name,
+              user.email,
+              '',
+              user.img,
+              user.google,
+              user.role,
+              user.uid
+            )
+        );
+
+        return {
+          total: resp.total,
+          users,
+        };
+      })
+    );
   }
 }
