@@ -6,6 +6,7 @@ import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
 import { Router } from '@angular/router';
 import { User } from '../models/user.model';
+import { GetUsers } from '../interfaces/get-users.interface';
 
 declare const gapi: any;
 @Injectable({
@@ -30,6 +31,14 @@ export class UserService {
 
   public get uid(): string {
     return this.user.uid || '';
+  }
+
+  public get headers() {
+    return {
+      headers: {
+        'x-token': this.token,
+      },
+    };
   }
 
   googleInit() {
@@ -57,6 +66,7 @@ export class UserService {
     });
   }
 
+  // TODO: Important!! (models "users")
   validateToken(): Observable<boolean> {
     return this.http
       .get<boolean>(`${this.baseUrl}/login/renew`, {
@@ -104,5 +114,11 @@ export class UserService {
     return this.http
       .post(`${this.baseUrl}/login/google`, { token })
       .pipe(tap((resp: any) => localStorage.setItem('token', resp.token)));
+  }
+
+  getUsers(from: number = 0): Observable<GetUsers> {
+    const url = `${this.baseUrl}/users?from=${from}`;
+
+    return this.http.get<GetUsers>(url, this.headers);
   }
 }

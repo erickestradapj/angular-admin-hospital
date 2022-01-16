@@ -22,10 +22,9 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Bordered Table</h4>
+        <h4 class="card-title">Total users ({{ totalUsers }})</h4>
         <h6 class="card-subtitle">
-          Add<code>.table-bordered</code>for borders on all sides of the table
-          and cells.
+          for borders on all sides of the table and cells.
         </h6>
         <div class="table-responsive">
           <table class="table table-bordered">
@@ -40,12 +39,20 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Tantas earum numeris</td>
-                <td>Tantas earum numeris</td>
-                <td>Tantas earum numeris</td>
-                <td>Tantas earum numeris</td>
-                <td>Tantas earum numeris</td>
+              <tr *ngFor="let user of users">
+                <td>xxxxx</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                  <span *ngIf="user.google" class="label label-danger"
+                    >Google</span
+                  >
+                  &nbsp;
+                  <span *ngIf="!user.google" class="label label-info"
+                    >Email</span
+                  >
+                </td>
                 <td class="text-nowrap">
                   <a href="#" data-toggle="tooltip" data-original-title="Edit">
                     <i class="fa fa-pencil text-inverse m-r-10"></i>
@@ -63,9 +70,11 @@
           </table>
         </div>
 
-        <button class="btn btn-secondary">Before</button>
+        <button (click)="changePage(-5)" class="btn btn-secondary">
+          Before
+        </button>
         &nbsp;
-        <button class="btn btn-secondary">After</button>
+        <button (click)="changePage(5)" class="btn btn-secondary">After</button>
       </div>
     </div>
   </div>
