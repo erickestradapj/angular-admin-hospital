@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/models/user.model';
 import { SearchesService } from 'src/app/services/searches.service';
 import { UserService } from 'src/app/services/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-users',
@@ -24,7 +25,7 @@ export class UsersComponent implements OnInit {
     this.printUsers();
   }
 
-  public printUsers() {
+  printUsers() {
     this.loading = true;
     this.userService.getUsers(this.from).subscribe(({ total, users }) => {
       this.totalUsers = total;
@@ -34,7 +35,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  public changePage(value: number) {
+  changePage(value: number) {
     this.from += value;
 
     if (this.from < 0) {
@@ -46,7 +47,7 @@ export class UsersComponent implements OnInit {
     this.printUsers();
   }
 
-  public search(term: string) {
+  search(term: string) {
     if (term.length === 0) {
       this.users = this.usersTemp;
       return;
@@ -54,6 +55,33 @@ export class UsersComponent implements OnInit {
 
     this.searchesService.search('users', term).subscribe((results) => {
       this.users = results;
+    });
+  }
+
+  deleteUser(user: User) {
+    if (user.uid === this.userService.uid) {
+      Swal.fire('Error', 'cant not delete itself ', 'error');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Will delete the user ${user.name}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.deleteUser(user).subscribe((resp) => {
+          this.printUsers();
+
+          Swal.fire(
+            'User deleted',
+            `${user.name} was be deleted successfully`,
+            'success'
+          );
+        });
+      }
     });
   }
 }

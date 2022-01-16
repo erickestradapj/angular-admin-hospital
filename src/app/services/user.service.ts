@@ -141,4 +141,12 @@ export class UserService {
       })
     );
   }
+
+  deleteUser(user: User) {
+    // /users/0111111333344689bbcccdff;
+
+    const url = `${this.baseUrl}/users/${user.uid}`;
+
+    return this.http.delete(url, this.headers);
+  }
 }

@@ -62,13 +62,14 @@
                   >
                 </td>
                 <td class="text-nowrap text-center">
-                  <a href="#" data-toggle="tooltip" data-original-title="Edit">
+                  <a data-toggle="tooltip" data-original-title="Edit">
                     <i class="fa fa-pencil text-inverse m-r-10"></i>
                   </a>
                   <a
-                    href="#"
                     data-toggle="tooltip"
                     data-original-title="Delete"
+                    class="cursor"
+                    (click)="deleteUser(user)"
                   >
                     <i class="fa fa-close text-danger"></i>
                   </a>
