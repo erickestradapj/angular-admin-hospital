@@ -97,11 +97,11 @@ export class UserService {
       role: this.user.role || '',
     };
 
-    return this.http.put(`${this.baseUrl}/users/${this.uid}`, data, {
-      headers: {
-        'x-token': this.token,
-      },
-    });
+    return this.http.put(
+      `${this.baseUrl}/users/${this.uid}`,
+      data,
+      this.headers
+    );
   }
 
   login(formData: LoginForm): Observable<LoginForm> {
@@ -148,5 +148,13 @@ export class UserService {
     const url = `${this.baseUrl}/users/${user.uid}`;
 
     return this.http.delete(url, this.headers);
+  }
+
+  updateProfileFromTable(user: User) {
+    return this.http.put(
+      `${this.baseUrl}/users/${user.uid}`,
+      user,
+      this.headers
+    );
   }
 }
