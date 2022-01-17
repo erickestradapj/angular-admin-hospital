@@ -1,38 +1,53 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { User } from 'src/app/models/user.model';
-import { SearchesService } from 'src/app/services/searches.service';
-import { UserService } from 'src/app/services/user.service';
-import Swal from 'sweetalert2';
 
+import { ModalImageService } from 'src/app/services/modal-image.service';
+import { UserService } from 'src/app/services/user.service';
+import { SearchesService } from 'src/app/services/searches.service';
+
+import Swal from 'sweetalert2';
+import { delay, Subscription } from 'rxjs';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css'],
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
   public totalUsers: number = 0;
   public users: User[] = [];
   public usersTemp: User[] = [];
+
+  public imgSubs!: Subscription;
   public from: number = 0;
   public loading: boolean = true;
 
   constructor(
     private userService: UserService,
-    private searchesService: SearchesService
+    private searchesService: SearchesService,
+    private modalImageService: ModalImageService
   ) {}
+  ngOnDestroy(): void {
+    this.imgSubs.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.printUsers();
+
+    this.modalImageService.newImage
+      .pipe(delay(100))
+      .subscribe((img) => this.printUsers());
   }
 
   printUsers() {
     this.loading = true;
-    this.userService.getUsers(this.from).subscribe(({ total, users }) => {
-      this.totalUsers = total;
-      this.users = users;
-      this.usersTemp = users;
-      this.loading = false;
-    });
+    this.imgSubs = this.userService
+      .getUsers(this.from)
+      .subscribe(({ total, users }) => {
+        this.totalUsers = total;
+        this.users = users;
+        this.usersTemp = users;
+        this.loading = false;
+      });
   }
 
   changePage(value: number) {
@@ -89,5 +104,10 @@ export class UsersComponent implements OnInit {
     this.userService.updateProfileFromTable(user).subscribe((resp) => {
       console.log(resp);
     });
+  }
+
+  openModal(user: User) {
+    console.log(user);
+    this.modalImageService.openModal('users', user.uid!, user.img);
   }
 }
