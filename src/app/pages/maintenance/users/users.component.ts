@@ -33,21 +33,19 @@ export class UsersComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.printUsers();
 
-    this.modalImageService.newImage
+    this.imgSubs = this.modalImageService.newImage
       .pipe(delay(100))
       .subscribe((img) => this.printUsers());
   }
 
   printUsers() {
     this.loading = true;
-    this.imgSubs = this.userService
-      .getUsers(this.from)
-      .subscribe(({ total, users }) => {
-        this.totalUsers = total;
-        this.users = users;
-        this.usersTemp = users;
-        this.loading = false;
-      });
+    this.userService.getUsers(this.from).subscribe(({ total, users }) => {
+      this.totalUsers = total;
+      this.users = users;
+      this.usersTemp = users;
+      this.loading = false;
+    });
   }
 
   changePage(value: number) {

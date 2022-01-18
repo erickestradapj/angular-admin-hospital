@@ -65,21 +65,21 @@ const routes: Routes = [
         path: 'users',
         component: UsersComponent,
         data: {
-          title: 'Application user',
+          title: 'User Maintenance',
         },
       },
       {
         path: 'hospitals',
         component: HospitalsComponent,
         data: {
-          title: 'Application user',
+          title: 'hospital Maintenance',
         },
       },
       {
         path: 'doctors',
         component: DoctorsComponent,
         data: {
-          title: 'Application user',
+          title: 'doctor Maintenance',
         },
       },
     ],
