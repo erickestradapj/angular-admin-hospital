@@ -3,6 +3,7 @@ import { delay, Subscription } from 'rxjs';
 import { Hospital } from 'src/app/models/hospital.model';
 import { HospitalService } from 'src/app/services/hospital.service';
 import { ModalImageService } from 'src/app/services/modal-image.service';
+import { SearchesService } from 'src/app/services/searches.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,7 +18,8 @@ export class HospitalsComponent implements OnInit, OnDestroy {
 
   constructor(
     private hospitalService: HospitalService,
-    private modalImageService: ModalImageService
+    private modalImageService: ModalImageService,
+    private searchesService: SearchesService
   ) {}
 
   ngOnInit(): void {
@@ -26,6 +28,16 @@ export class HospitalsComponent implements OnInit, OnDestroy {
     this.imgSubs = this.modalImageService.newImage
       .pipe(delay(100))
       .subscribe((img) => this.printHospitals());
+  }
+
+  search(term: string) {
+    if (term.length === 0) {
+      this.printHospitals();
+    }
+
+    this.searchesService.search('hospitals', term).subscribe((results) => {
+      this.hospitals = results as Hospital[];
+    });
   }
 
   ngOnDestroy(): void {

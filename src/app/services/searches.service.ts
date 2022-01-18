@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Hospital } from '../models/hospital.model';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -39,6 +40,10 @@ export class SearchesService {
     );
   }
 
+  private transformHospitals(results: any[]): Hospital[] {
+    return results;
+  }
+
   public search(type: 'users' | 'doctors' | 'hospitals', term: string) {
     const url = `${this.baseUrl}/todo/collection/${type}/${term}`;
 
@@ -47,6 +52,9 @@ export class SearchesService {
         switch (type) {
           case 'users':
             return this.transformUsers(resp.results);
+
+          case 'hospitals':
+            return this.transformHospitals(resp.results);
 
           default:
             return [];
