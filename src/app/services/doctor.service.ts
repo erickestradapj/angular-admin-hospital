@@ -32,7 +32,7 @@ export class DoctorService {
       .pipe(map((resp: { ok: boolean; doctors: Doctor[] }) => resp.doctors));
   }
 
-  createDoctor(doctor: Doctor) {
+  createDoctor(doctor: { name: string; hospital: string }) {
     const url = `${this.baseUrl}/doctors`;
 
     return this.http.post(url, doctor, this.headers);
