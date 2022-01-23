@@ -32,6 +32,14 @@ export class DoctorService {
       .pipe(map((resp: { ok: boolean; doctors: Doctor[] }) => resp.doctors));
   }
 
+  getDoctorById(id: string) {
+    const url = `${this.baseUrl}/doctors/${id}`;
+
+    return this.http
+      .get<{ ok: boolean; doctor: Doctor }>(url, this.headers)
+      .pipe(map((resp: { ok: boolean; doctor: Doctor }) => resp.doctor));
+  }
+
   createDoctor(doctor: { name: string; hospital: string }) {
     const url = `${this.baseUrl}/doctors`;
 

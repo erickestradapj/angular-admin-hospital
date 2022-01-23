@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Doctor } from 'src/app/models/doctor.model';
 import { Hospital } from 'src/app/models/hospital.model';
 import { DoctorService } from 'src/app/services/doctor.service';
@@ -22,10 +22,13 @@ export class DoctorComponent implements OnInit {
     private fb: FormBuilder,
     private hospitalService: HospitalService,
     private doctorService: DoctorService,
-    private router: Router
+    private router: Router,
+    private activateRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.activateRoute.params.subscribe(({ id }) => this.loadDoctor(id));
+
     this.doctorForm = this.fb.group({
       name: ['', Validators.required],
       hospital: ['', Validators.required],
@@ -41,6 +44,13 @@ export class DoctorComponent implements OnInit {
   printHospitals() {
     this.hospitalService.getHospitals().subscribe((hospitals: Hospital[]) => {
       this.hospitals = hospitals;
+    });
+  }
+
+  loadDoctor(id: string) {
+    this.doctorService.getDoctorById(id).subscribe((doctor) => {
+      console.log(doctor);
+      this.doctorSelected = doctor;
     });
   }
 
