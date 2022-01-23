@@ -4,6 +4,7 @@ import { Doctor } from 'src/app/models/doctor.model';
 import { DoctorService } from 'src/app/services/doctor.service';
 import { ModalImageService } from 'src/app/services/modal-image.service';
 import { SearchesService } from 'src/app/services/searches.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doctors',
@@ -50,8 +51,30 @@ export class DoctorsComponent implements OnInit, OnDestroy {
       this.printDoctors();
     }
 
-    this.searchesService.search('hospitals', term).subscribe((results) => {
+    this.searchesService.search('doctors', term).subscribe((results) => {
       this.doctors = results as Doctor[];
+    });
+  }
+
+  deleteDoctor(doctor: Doctor) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Will delete the user ${doctor.name}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.doctorService.deleteDoctor(doctor._id!).subscribe((resp) => {
+          this.printDoctors();
+
+          Swal.fire(
+            'User deleted',
+            `${doctor.name} was be deleted successfully`,
+            'success'
+          );
+        });
+      }
     });
   }
 }

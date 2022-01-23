@@ -30,7 +30,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-8">
-            <h4 class="card-title">Hospitals ({{ doctors.length }})</h4>
+            <h4 class="card-title">Doctors ({{ doctors.length }})</h4>
             <h6 class="card-subtitle">Doctors registered in my application</h6>
           </div>
 
@@ -74,9 +74,10 @@
                     <i class="fa fa-pencil text-inverse m-r-10"></i>
                   </a>
                   <a
-                    href="#"
+                    class="cursor"
                     data-toggle="tooltip"
                     data-original-title="Delete"
+                    (click)="deleteDoctor(doctor)"
                   >
                     <i class="fa fa-close text-danger"></i>
                   </a>
