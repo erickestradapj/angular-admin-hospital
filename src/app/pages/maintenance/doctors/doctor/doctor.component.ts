@@ -48,19 +48,48 @@ export class DoctorComponent implements OnInit {
   }
 
   loadDoctor(id: string) {
-    this.doctorService.getDoctorById(id).subscribe((doctor) => {
+    if (id === 'new') {
+      return;
+    }
+
+    this.doctorService.getDoctorById(id).subscribe((doctor: any) => {
+      if (!doctor) {
+        this.router.navigateByUrl('/dashboard/doctors');
+      }
+
       console.log(doctor);
+      const {
+        name,
+        hospital: { _id },
+      } = doctor;
       this.doctorSelected = doctor;
+      this.doctorForm.setValue({ name, hospital: _id });
     });
   }
 
   saveDoctor() {
     const { name } = this.doctorForm.value;
-    this.doctorService
-      .createDoctor(this.doctorForm.value)
-      .subscribe((resp: any) => {
-        Swal.fire('Created', `${name} created successfully`, 'success');
-        this.router.navigateByUrl(`/dashboard/doctor/${resp.doctor._id}`);
+
+    if (this.doctorSelected) {
+      // update
+      const data = {
+        ...this.doctorForm.value,
+        _id: this.doctorSelected._id,
+      };
+
+      this.doctorService.updateDoctor(data).subscribe((resp) => {
+        console.log(resp);
+        Swal.fire('Updated', `${name} updated successfully`, 'success');
       });
+    } else {
+      // create
+
+      this.doctorService
+        .createDoctor(this.doctorForm.value)
+        .subscribe((resp: any) => {
+          Swal.fire('Created', `${name} created successfully`, 'success');
+          this.router.navigateByUrl(`/dashboard/doctor/${resp.doctor._id}`);
+        });
+    }
   }
 }
