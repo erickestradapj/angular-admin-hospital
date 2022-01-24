@@ -9,17 +9,14 @@ import { SidebarService } from '../../services/sidebar.service';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
-  public menuItems!: any[];
   public user!: User;
 
   constructor(
-    private sidebarService: SidebarService,
+    public sidebarService: SidebarService,
     private userService: UserService
   ) {
-    this.menuItems = sidebarService.menu;
-  }
-
-  ngOnInit(): void {
     this.user = this.userService.user;
   }
+
+  ngOnInit(): void {}
 }

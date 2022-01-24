@@ -29,6 +29,10 @@ export class UserService {
     return localStorage.getItem('token') || '';
   }
 
+  public get role(): 'ADMIN_ROLE' | 'USER_ROLE' {
+    return this.user.role!;
+  }
+
   public get uid(): string {
     return this.user.uid || '';
   }
@@ -56,8 +60,16 @@ export class UserService {
     });
   }
 
+  saveLocalStorage(token: string, menu: any) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }
+
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('menu');
+
+    // TODO: Delete menu
 
     this.auth2.signOut().then(() => {
       this.ngZone.run(() => {
@@ -78,7 +90,9 @@ export class UserService {
         map((resp: any) => {
           const { email, google, img = '', name, role, uid } = resp.user;
           this.user = new User(name, email, '', img, google, role, uid);
-          localStorage.setItem('token', resp.token);
+          // localStorage.setItem('token', resp.token);
+          // localStorage.setItem('menu', resp.menu);
+          this.saveLocalStorage(resp.token, resp.menu);
           return true;
         }),
         catchError((err) => of(false))
@@ -86,9 +100,12 @@ export class UserService {
   }
 
   createUser(formData: RegisterForm): Observable<RegisterForm> {
-    return this.http
-      .post<RegisterForm>(`${this.baseUrl}/users`, formData)
-      .pipe(tap((resp: any) => localStorage.setItem('token', resp.token)));
+    return this.http.post<RegisterForm>(`${this.baseUrl}/users`, formData).pipe(
+      tap((resp: any) => {
+        localStorage.setItem('token', resp.token);
+        localStorage.setItem('menu', resp.menu);
+      })
+    );
   }
 
   updateProfile(data: { email: string; name: string; role: string }) {
@@ -105,15 +122,23 @@ export class UserService {
   }
 
   login(formData: LoginForm): Observable<LoginForm> {
-    return this.http
-      .post<LoginForm>(`${this.baseUrl}/login`, formData)
-      .pipe(tap((resp: any) => localStorage.setItem('token', resp.token)));
+    return this.http.post<LoginForm>(`${this.baseUrl}/login`, formData).pipe(
+      tap((resp: any) => {
+        // localStorage.setItem('token', resp.token);
+        // localStorage.setItem('menu', resp.menu);
+        this.saveLocalStorage(resp.token, resp.menu);
+      })
+    );
   }
 
   loginGoogle(token: any) {
-    return this.http
-      .post(`${this.baseUrl}/login/google`, { token })
-      .pipe(tap((resp: any) => localStorage.setItem('token', resp.token)));
+    return this.http.post(`${this.baseUrl}/login/google`, { token }).pipe(
+      tap((resp: any) => {
+        // localStorage.setItem('token', resp.token);
+        // localStorage.setItem('menu', resp.menu);
+        this.saveLocalStorage(resp.token, resp.menu);
+      })
+    );
   }
 
   getUsers(from: number = 0): Observable<GetUsers> {

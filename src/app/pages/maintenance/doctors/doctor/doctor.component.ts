@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { delay } from 'rxjs';
 import { Doctor } from 'src/app/models/doctor.model';
 import { Hospital } from 'src/app/models/hospital.model';
 import { DoctorService } from 'src/app/services/doctor.service';
@@ -52,19 +53,22 @@ export class DoctorComponent implements OnInit {
       return;
     }
 
-    this.doctorService.getDoctorById(id).subscribe((doctor: any) => {
-      if (!doctor) {
-        this.router.navigateByUrl('/dashboard/doctors');
-      }
+    this.doctorService
+      .getDoctorById(id)
+      .pipe(delay(100))
+      .subscribe((doctor: any) => {
+        if (!doctor) {
+          this.router.navigateByUrl('/dashboard/doctors');
+        }
 
-      console.log(doctor);
-      const {
-        name,
-        hospital: { _id },
-      } = doctor;
-      this.doctorSelected = doctor;
-      this.doctorForm.setValue({ name, hospital: _id });
-    });
+        console.log(doctor);
+        const {
+          name,
+          hospital: { _id },
+        } = doctor;
+        this.doctorSelected = doctor;
+        this.doctorForm.setValue({ name, hospital: _id });
+      });
   }
 
   saveDoctor() {
